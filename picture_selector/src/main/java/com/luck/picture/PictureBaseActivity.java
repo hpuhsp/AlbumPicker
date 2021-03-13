@@ -30,6 +30,7 @@ import com.luck.picture.config.PictureMimeType;
 import com.luck.picture.config.PictureSelectionConfig;
 import com.luck.picture.dialog.PictureCustomDialog;
 import com.luck.picture.dialog.PictureLoadingDialog;
+import com.luck.picture.dialog.VideoWorkProgressFragment;
 import com.luck.picture.engine.PictureSelectorEngine;
 import com.luck.picture.entity.LocalMedia;
 import com.luck.picture.entity.LocalMediaFolder;
@@ -49,6 +50,7 @@ import com.luck.picture.tools.StringUtils;
 import com.luck.picture.tools.ToastUtils;
 import com.luck.picture.tools.VoiceUtils;
 import com.luck.picture.utils.FileUtils;
+import com.yalantis.ucrop.view.widget.HorizontalProgressWheelView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,8 +58,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -78,6 +83,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
     protected List<LocalMedia> selectionMedias;
     protected Handler mHandler;
     protected View container;
+    private VideoWorkProgressFragment mWorkLoadingProgress;
     /**
      * if there more
      */
@@ -357,6 +363,9 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
 
     /**
      * Compress Video And Images
+     * 说明：考虑到不过度引入其他库（如:RxJava、Kotlin Flow）的原则，此处以JDK原生内容实现。
+     * 由于Android Api版本25才支持CompletableFuture.runAsync()等方式，当前用CompletionService类实现多
+     * 线程处理。
      *
      * @param result
      */
@@ -398,6 +407,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                             if (taskSize[0] == compressSize) {
                                 backForResult(result);
                             } else {
+                                dismissDialog();
                                 // 压缩视频
                                 compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
                             }
@@ -410,11 +420,13 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                             if (taskSize[0] == compressSize) {
                                 backForResult(result);
                             } else {
+                                dismissDialog();
                                 compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
                             }
                         }
                     }), "默认图片压缩返回结果");
                 } else if (config.isVideoCompress && !videoList.isEmpty()) {
+                    dismissDialog();
                     compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
                 }
 
@@ -437,6 +449,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onSuccess(List<LocalMedia> images) {
+                                    dismissDialog();
                                     taskSize[0] += images.size();
                                     if (taskSize[0] == compressSize) {
                                         backForResult(result);
@@ -445,6 +458,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onError(Throwable e) {
+                                    dismissDialog();
                                     taskSize[0] += imageList.size();
                                     if (taskSize[0] == compressSize) {
                                         backForResult(result);
@@ -469,11 +483,25 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
      * @param result
      */
     private void backForResult(List<LocalMedia> result) {
-        dismissDialog();
+        if (mWorkLoadingProgress != null && mWorkLoadingProgress.isAdded()) {
+            mWorkLoadingProgress.dismiss();
+        }
         for (LocalMedia media : result) {
             System.out.println("CompressPath：------------------------>" + media.getCompressPath());
         }
         onResult(result);
+    }
+
+    /**
+     * 视频上传进度条
+     */
+    private void initWorkLoadingProgress() {
+        if (mWorkLoadingProgress == null) {
+            mWorkLoadingProgress = VideoWorkProgressFragment.newInstance(getString(R.string.video_in_processing));
+        }
+        mWorkLoadingProgress.setProgress(0);
+        mWorkLoadingProgress.show(getSupportFragmentManager(), "progress_dialog");
+
     }
 
     /**
@@ -484,13 +512,19 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
      * @param taskSize
      */
     private void compressVideoFiles(CompletionService<String> completionService, List<LocalMedia> result, List<LocalMedia> videoList, int[] taskSize, int compressSize) {
-        for (LocalMedia media : videoList) {
+        initWorkLoadingProgress();
+        final int size = videoList.size();
+        final float unit = (float) 100 / size;
+        Map<Integer, Float> concurrentHashMap = new ConcurrentHashMap<Integer, Float>();
+        for (int i = 0; i < videoList.size(); i++) {
+            final int j = i;
+            concurrentHashMap.put(j, 0f);
             VideoProcessor.Processor processor = VideoProcessor.processor(this);
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(this, Uri.parse(media.getPath()));
-            media.setCompressPath(FileUtils.getCompressVideoFile(this));
-            retriever.setDataSource(this, Uri.parse(media.getPath()));
-            completionService.submit(new VideoCompressTask(processor, media, retriever, new OnCompressVideoCallBack() {
+            retriever.setDataSource(this, Uri.parse(videoList.get(i).getPath()));
+            videoList.get(i).setCompressPath(FileUtils.getCompressVideoFile(this));
+            retriever.setDataSource(this, Uri.parse(videoList.get(i).getPath()));
+            completionService.submit(new VideoCompressTask(processor, videoList.get(i), retriever, new OnCompressVideoCallBack() {
                 @Override
                 public void onCompressSuccess(LocalMedia localMedia) {
                     taskSize[0]++;
@@ -498,7 +532,39 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                         backForResult(result);
                     }
                 }
+
+                @Override
+                public void onCompressFailed() {
+                    ToastUtils.s(PictureBaseActivity.this, "视频压缩失败!");
+                    taskSize[0]++;
+                    if (taskSize[0] == compressSize) {
+                        backForResult(result);
+                    }
+                }
+
+                @Override
+                public void onCompleteProgress(float progress) {
+                    concurrentHashMap.put(j, unit * progress);
+                    calculateTaskProgress(concurrentHashMap, size);
+                }
             }), "默认视频压缩返回结果");
+        }
+    }
+
+    /**
+     * 计算视频压缩进度
+     *
+     * @param concurrentHashMap
+     * @param size
+     */
+    private void calculateTaskProgress(Map<Integer, Float> concurrentHashMap, int size) {
+        System.out.println("------------------currentThread------------>" + Thread.currentThread().getName());
+        float completeProgress = 0;
+        for (int a = 0; a < size; a++) {
+            completeProgress += concurrentHashMap.get(a);
+        }
+        if (null != mWorkLoadingProgress && mWorkLoadingProgress.isAdded()) {
+            mWorkLoadingProgress.setProgress((int) completeProgress);
         }
     }
 
@@ -555,10 +621,14 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
             int bitrate = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
             String filePath = "";
             if (SdkVersionUtils.checkedAndroid_Q()) {
-                filePath = localMedia.getAndroidQToPath();
+                filePath = localMedia.getRealPath();
             } else {
                 filePath = localMedia.getPath();
             }
+            if (PictureMimeType.isContent(filePath)) {
+                filePath = PictureFileUtils.getPath(PictureBaseActivity.this, Uri.parse(localMedia.getPath()));
+            }
+
             processor
                     .input(filePath)
                     .output(localMedia.getCompressPath())
@@ -569,10 +639,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                     .progressListener(new VideoProgressListener() {
                         @Override
                         public void onProgress(float progress) {
-                            Log.d("TAG", "onProgress: ->" + progress * 100 + "%");
-                            if (progress == 1) {
-//                                                onResult(result);
-                            }
+                            mCallBack.onCompleteProgress(progress);
                         }
                     })
                     .process();
@@ -583,10 +650,20 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         public void onSuccess(LocalMedia result) {
             mCallBack.onCompressSuccess(result);
         }
+
+        @Override
+        public void onFail(Throwable t) {
+            super.onFail(t);
+            mCallBack.onCompressFailed();
+        }
     }
 
     interface OnCompressVideoCallBack {
         void onCompressSuccess(LocalMedia localMedia);
+
+        void onCompressFailed();
+
+        void onCompleteProgress(float progress);
     }
 
     /**
@@ -786,32 +863,32 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
     /**
      * return image result
      *
-     * @param images
+     * @param mediaFiles
      */
-    protected void onResult(List<LocalMedia> images) {
+    protected void onResult(List<LocalMedia> mediaFiles) {
         boolean isAndroidQ = SdkVersionUtils.checkedAndroid_Q();
         if (isAndroidQ && config.isAndroidQTransform) {
             showPleaseDialog();
-            onResultToAndroidAsy(images);
+            onResultToAndroidAsy(mediaFiles);
         } else {
             dismissDialog();
             if (config.camera
                     && config.selectionMode == PictureConfig.MULTIPLE
                     && selectionMedias != null) {
-                images.addAll(images.size() > 0 ? images.size() - 1 : 0, selectionMedias);
+                mediaFiles.addAll(mediaFiles.size() > 0 ? mediaFiles.size() - 1 : 0, selectionMedias);
             }
             if (config.isCheckOriginalImage) {
-                int size = images.size();
+                int size = mediaFiles.size();
                 for (int i = 0; i < size; i++) {
-                    LocalMedia media = images.get(i);
+                    LocalMedia media = mediaFiles.get(i);
                     media.setOriginal(true);
                     media.setOriginalPath(media.getPath());
                 }
             }
             if (PictureSelectionConfig.listener != null) {
-                PictureSelectionConfig.listener.onResult(images);
+                PictureSelectionConfig.listener.onResult(mediaFiles);
             } else {
-                Intent intent = PictureSelector.putIntentResult(images);
+                Intent intent = PictureSelector.putIntentResult(mediaFiles);
                 setResult(RESULT_OK, intent);
             }
             exit();

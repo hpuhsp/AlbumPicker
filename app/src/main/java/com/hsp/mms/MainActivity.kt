@@ -1,10 +1,8 @@
 package com.hsp.mms
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.SyncStateContract
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.luck.picture.PictureSelector
 import com.luck.picture.config.PictureConfig
@@ -20,9 +18,59 @@ class MainActivity : AppCompatActivity(), NinePhotoView.OnClickItemListener {
         setContentView(R.layout.activity_main)
         photo_view.addOnClickItemListener(this)
         photo_view.showPlus(true)
-        btn_open.setOnClickListener {
-            openAlbum(this, ArrayList())
+    }
+
+    /**
+     * 预览图片/视频
+     */
+    fun previewMedia(
+        activity: FragmentActivity,
+        position: Int,
+        selectList: List<LocalMedia>
+    ) {
+        if (selectList.isEmpty()) {
+            return
         }
+        val localMedia = selectList[position]
+        when (PictureMimeType.getMimeType(localMedia.mimeType)) {
+            PictureConfig.TYPE_VIDEO -> {
+                // 预览视频
+                PictureSelector.create(activity)
+                    .externalPictureVideo(localMedia.path)
+            }
+
+            else -> {
+                PictureSelector.create(activity)
+                    .themeStyle(R.style.picture_default_style)
+                    .isNotPreviewDownload(true)
+                    .imageEngine(GlideEngine.createGlideEngine())
+                    .openExternalPreview(position, selectList)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                PictureConfig.CHOOSE_REQUEST -> {
+                    val selectList = PictureSelector.obtainMultipleResult(data)
+                    photo_view.setList(selectList)
+                }
+            }
+        }
+    }
+
+    override fun onItemClickPreview(position: Int, list: List<LocalMedia>) {
+        PictureHelper.getInstance().previewMedia(this, position, list)
+    }
+
+    override fun onItemClickAddFromAlbum() {
+        PictureHelper.getInstance().openAlbum(this, photo_view.getData())
+    }
+
+    override fun onItemClickDelete(position: Int) {
+        System.out.println("--------------删除操作----------------->")
     }
 
     /**
@@ -50,27 +98,5 @@ class MainActivity : AppCompatActivity(), NinePhotoView.OnClickItemListener {
             .isQuickCapture(false)
             .recordVideoSecond(15)
             .forResult(PictureConfig.CHOOSE_REQUEST)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                PictureConfig.CHOOSE_REQUEST -> {
-                    val selectList = PictureSelector.obtainMultipleResult(data)
-                    photo_view.setList(selectList)
-                }
-            }
-        }
-    }
-
-    override fun onItemClickPreview(position: Int, list: List<LocalMedia>) {
-    }
-
-    override fun onItemClickAddFromAlbum() {
-        openAlbum(this, photo_view.getData())
-    }
-
-    override fun onItemClickDelete(position: Int) {
     }
 }
