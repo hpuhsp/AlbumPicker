@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EquipmentNinePhotoView">
+        <attr name="np_max_select" format="integer" />
+        <attr name="np_show_plus" format="boolean" />
+        <attr name="np_columns" format="integer" />
+        <attr name="np_item_margin" format="dimension" />
+        <attr name="np_white_spacing" format="dimension" />
+        <attr name="np_edge_spacing" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -1163,7 +1163,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                     UCropManager.ofCrop(this, cuts);
                 }
             }
-        } else if (config.isCompress) { // 图片压缩
+        } else if (config.isCompress || config.isVideoCompress) { // 图片、视频压缩
             int size = images.size();
             int imageNum = 0;
             for (int i = 0; i < size; i++) {
@@ -1219,12 +1219,8 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                 }
                 UCropManager.ofCrop(this, cuts);
             }
-        } else if (config.isCompress
-                && isHasImage) { // 图片压缩处理
+        } else if (config.isCompress || config.isVideoCompress) { // 图片压缩处理
             compressImage(images);
-        } else if (PictureMimeType.isHasVideo(image.getMimeType())) { // 视频压缩处理
-            // TODO 视频压缩
-            Log.d(TAG, "separateMimeTypeWith: -----------视频压缩-------------------->");
         } else { // 原图直接返回
             onResult(images);
         }

@@ -352,7 +352,6 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
      */
     protected void compressImage(final List<LocalMedia> result) {
         showPleaseDialog();
-//        compressToLuban(result);
         compressMediaFiles(result);
     }
 
@@ -385,8 +384,6 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         if (config.isVideoCompress) {
             size += videoList.size();
         }
-        Log.i("TAG", "compressAction: ----------图片数量-------------------->" + imageList.size());
-        Log.i("TAG", "compressAction: ----------视频数量-------------------->" + videoList.size());
         int compressSize = size;
         final int[] taskSize = {0};
         try {
@@ -474,7 +471,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
     private void backForResult(List<LocalMedia> result) {
         dismissDialog();
         for (LocalMedia media : result) {
-            System.out.println("--------------backForResult------------------------>" + media.getCompressPath());
+            System.out.println("CompressPath：------------------------>" + media.getCompressPath());
         }
         onResult(result);
     }

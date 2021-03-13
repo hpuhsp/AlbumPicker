@@ -36,6 +36,5 @@ dependencies {
     implementation "androidx.camera:camera-view:${cfgs.camerax_view}"
     api project(':ucrop')
     api project(':video_compress')
-    implementation 'com.blankj:utilcodex:1.29.0'
 }
 apply from: '../upload_nexus.gradle'

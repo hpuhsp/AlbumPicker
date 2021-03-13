@@ -48,4 +48,6 @@ dependencies {
     api project(':picture_selector')
     implementation "com.github.bumptech.glide:glide:${cfgs.glide_version}"
     implementation "pub.devrel:easypermissions:3.0.0"
+    implementation 'com.blankj:utilcodex:1.29.0'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 }
