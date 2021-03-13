@@ -1,0 +1,64 @@
+apply plugin: 'maven-publish'
+
+def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
+}
+
+def getRepositoryUsername() {
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+}
+
+def getRepositoryUrl() {
+    return isPublishRelease() ? RELEASE_REPOSITORY_URL : SNAPSHOT_REPOSITORY_URL
+}
+
+afterEvaluate { project ->
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username getRepositoryUsername() // 仓库发布用户名
+                    password getRepositoryPassword() // 仓库发布用户密码
+                }
+                url getRepositoryUrl() // 仓库地址
+            }
+        }
+        publications {
+            maven(MavenPublication) {
+                groupId GROUP_ID// groupId
+                artifactId ARTIFACT_ID // artifactId
+                version VERSION_NAME // 发布版本
+                description 'This is a liberary to test v1.0.0' // 说明描述
+            }
+        }
+    }
+
+    task androidJavadocs(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+        classifier = 'javadoc'
+        from androidJavadocs.destinationDir
+    }
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    //解决 JavaDoc 中文注释生成失败的问题
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+    artifacts {
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+}
+

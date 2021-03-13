@@ -1,0 +1,5 @@
+rootProject.name = "MMSHelper"
+include ':app'
+include ':picture_selector'
+include ':ucrop'
+include ':video_compress'
