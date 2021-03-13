@@ -19,7 +19,7 @@ import com.luck.picture.config.UCropOptions;
 import com.luck.picture.engine.CacheResourcesEngine;
 import com.luck.picture.engine.ImageEngine;
 import com.luck.picture.entity.LocalMedia;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.listener.OnCustomCameraInterfaceListener;
 import com.luck.picture.listener.OnCustomImagePreviewCallback;
 import com.luck.picture.listener.OnResultCallbackListener;

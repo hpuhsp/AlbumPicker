@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.luck.picture.config.PictureConfig;
 import com.luck.picture.config.PictureMimeType;
 import com.luck.picture.config.PictureSelectionConfig;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.manager.UCropManager;
 import com.luck.picture.entity.LocalMedia;
 import com.luck.picture.immersive.ImmersiveManage;

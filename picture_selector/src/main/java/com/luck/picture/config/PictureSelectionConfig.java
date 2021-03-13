@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import androidx.annotation.ColorInt;
 import androidx.annotation.StyleRes;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.camera.CustomCameraView;
 import com.luck.picture.engine.CacheResourcesEngine;
 import com.luck.picture.engine.ImageEngine;

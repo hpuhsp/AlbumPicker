@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.luck.picture.lib">
+    package="com.luck.picture">
 
     <uses-sdk tools:overrideLibrary="androidx.camera.view,
     androidx.camera:camera-camera2,
@@ -19,7 +19,7 @@
     </queries>
     <!--适配Android R包可见性 结束-->
 
-    <application>
+    <application android:requestLegacyExternalStorage="true">
         <provider
             android:name="com.luck.picture.PictureFileProvider"
             android:authorities="${applicationId}.provider"

@@ -29,7 +29,7 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.luck.picture.PictureMediaScannerConnection;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.camera.listener.CameraListener;
 import com.luck.picture.camera.listener.CaptureListener;
 import com.luck.picture.camera.listener.ClickListener;

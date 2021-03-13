@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.listener.OnItemClickListener;
 import com.luck.picture.tools.ScreenUtils;
 

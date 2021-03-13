@@ -4,7 +4,7 @@ package com.luck.picture.config;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 import java.io.File;
 

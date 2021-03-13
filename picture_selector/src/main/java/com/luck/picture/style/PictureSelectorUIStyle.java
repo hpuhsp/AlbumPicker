@@ -3,7 +3,7 @@ package com.luck.picture.style;
 import android.content.Context;
 import android.graphics.Color;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.app.IApp;
 import com.luck.picture.app.PictureAppMaster;
 import com.luck.picture.tools.ScreenUtils;

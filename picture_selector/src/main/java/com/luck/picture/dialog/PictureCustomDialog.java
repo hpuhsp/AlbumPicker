@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 public class PictureCustomDialog extends Dialog {
 

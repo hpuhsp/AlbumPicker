@@ -30,7 +30,7 @@ import com.luck.picture.config.PictureMimeType;
 import com.luck.picture.config.PictureSelectionConfig;
 import com.luck.picture.dialog.PictureCustomDialog;
 import com.luck.picture.entity.LocalMedia;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.listener.OnImageCompleteCallback;
 import com.luck.picture.permissions.PermissionChecker;
 import com.luck.picture.photoview.PhotoView;

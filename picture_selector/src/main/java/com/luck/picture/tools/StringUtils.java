@@ -7,7 +7,7 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.widget.TextView;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.config.PictureMimeType;
 
 import java.util.regex.Pattern;

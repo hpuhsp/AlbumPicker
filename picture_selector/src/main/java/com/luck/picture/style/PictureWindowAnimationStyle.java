@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.AnimRes;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 /**
  * @author：luck

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 public class PictureLoadingDialog extends Dialog {
 

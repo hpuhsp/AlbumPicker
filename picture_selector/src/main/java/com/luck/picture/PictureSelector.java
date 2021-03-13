@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.luck.picture.config.PictureConfig;
 import com.luck.picture.config.PictureMimeType;
 import com.luck.picture.entity.LocalMedia;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.style.PictureParameterStyle;
 import com.luck.picture.tools.DoubleUtils;
 

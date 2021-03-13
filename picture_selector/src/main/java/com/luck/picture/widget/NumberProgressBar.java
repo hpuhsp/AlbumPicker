@@ -11,7 +11,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 /**
  * @Description:

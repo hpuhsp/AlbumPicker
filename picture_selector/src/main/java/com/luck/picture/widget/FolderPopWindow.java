@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.adapter.PictureAlbumDirectoryAdapter;
 import com.luck.picture.config.PictureSelectionConfig;
 import com.luck.picture.entity.LocalMedia;

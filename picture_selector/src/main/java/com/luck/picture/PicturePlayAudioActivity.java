@@ -9,7 +9,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.luck.picture.config.PictureConfig;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.tools.DateUtils;
 
 /**

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.widget.NumberProgressBar;
 
 /**

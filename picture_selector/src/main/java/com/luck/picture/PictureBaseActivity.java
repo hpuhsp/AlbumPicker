@@ -37,7 +37,7 @@ import com.luck.picture.entity.LocalMediaFolder;
 import com.luck.picture.immersive.ImmersiveManage;
 import com.luck.picture.immersive.NavBarUtils;
 import com.luck.picture.language.PictureLanguageUtils;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.model.LocalMediaPageLoader;
 import com.luck.picture.permissions.PermissionChecker;
 import com.luck.picture.thread.PictureThreadUtils;
@@ -364,7 +364,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
     /**
      * Compress Video And Images
      * 说明：考虑到不过度引入其他库（如:RxJava、Kotlin Flow）的原则，此处以JDK原生内容实现。
-     * 由于Android Api版本25才支持CompletableFuture.runAsync()等方式，当前用CompletionService类实现多
+     * 由于Android Api版本25才支持CompletableFuture.runAsync()等方式，旧方式用CompletionService类实现多
      * 线程处理。
      *
      * @param result
@@ -396,11 +396,10 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         int compressSize = size;
         final int[] taskSize = {0};
         try {
-            CompletionService<String> completionService = new ExecutorCompletionService<String>(PictureThreadUtils.getIoPool());
             if (config.synOrAsy) {
                 // 同步实现,先压缩图片后压缩视频。
                 if (!imageList.isEmpty() && config.isCompress && !config.isCheckOriginalImage) {
-                    completionService.submit(new ImageCompressTask(imageList, cachePath, new OnCompressImageCallBack() {
+                    PictureThreadUtils.executeByIo(new ImageCompressTask(imageList, cachePath, new OnCompressImageCallBack() {
                         @Override
                         public void compressFailed(List<LocalMedia> images) {
                             taskSize[0] += images.size();
@@ -409,7 +408,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                             } else {
                                 dismissDialog();
                                 // 压缩视频
-                                compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
+                                compressVideoFiles(result, videoList, taskSize, compressSize);
                             }
                         }
 
@@ -421,13 +420,13 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                                 backForResult(result);
                             } else {
                                 dismissDialog();
-                                compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
+                                compressVideoFiles(result, videoList, taskSize, compressSize);
                             }
                         }
-                    }), "默认图片压缩返回结果");
+                    }));
                 } else if (config.isVideoCompress && !videoList.isEmpty()) {
                     dismissDialog();
-                    compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
+                    compressVideoFiles(result, videoList, taskSize, compressSize);
                 }
 
             } else {
@@ -468,7 +467,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                 }
                 // 视频压缩
                 if (config.isVideoCompress && !videoList.isEmpty()) {
-                    compressVideoFiles(completionService, result, videoList, taskSize, compressSize);
+                    compressVideoFiles(result, videoList, taskSize, compressSize);
                 }
             }
         } catch (Exception e) {
@@ -511,7 +510,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
      * @param videoList
      * @param taskSize
      */
-    private void compressVideoFiles(CompletionService<String> completionService, List<LocalMedia> result, List<LocalMedia> videoList, int[] taskSize, int compressSize) {
+    private void compressVideoFiles(List<LocalMedia> result, List<LocalMedia> videoList, int[] taskSize, int compressSize) {
         initWorkLoadingProgress();
         final int size = videoList.size();
         final float unit = (float) 100 / size;
@@ -524,7 +523,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
             retriever.setDataSource(this, Uri.parse(videoList.get(i).getPath()));
             videoList.get(i).setCompressPath(FileUtils.getCompressVideoFile(this));
             retriever.setDataSource(this, Uri.parse(videoList.get(i).getPath()));
-            completionService.submit(new VideoCompressTask(processor, videoList.get(i), retriever, new OnCompressVideoCallBack() {
+            PictureThreadUtils.executeByIo(new VideoCompressTask(processor, videoList.get(i), retriever, new OnCompressVideoCallBack() {
                 @Override
                 public void onCompressSuccess(LocalMedia localMedia) {
                     taskSize[0]++;
@@ -547,7 +546,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                     concurrentHashMap.put(j, unit * progress);
                     calculateTaskProgress(concurrentHashMap, size);
                 }
-            }), "默认视频压缩返回结果");
+            }));
         }
     }
 
@@ -558,7 +557,6 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
      * @param size
      */
     private void calculateTaskProgress(Map<Integer, Float> concurrentHashMap, int size) {
-        System.out.println("------------------currentThread------------>" + Thread.currentThread().getName());
         float completeProgress = 0;
         for (int a = 0; a < size; a++) {
             completeProgress += concurrentHashMap.get(a);
@@ -639,7 +637,12 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                     .progressListener(new VideoProgressListener() {
                         @Override
                         public void onProgress(float progress) {
-                            mCallBack.onCompleteProgress(progress);
+                            getDeliver().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mCallBack.onCompleteProgress(progress);
+                                }
+                            });
                         }
                     })
                     .process();

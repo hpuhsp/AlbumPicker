@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.camera.listener.CaptureListener;
 import com.luck.picture.camera.listener.ClickListener;
 import com.luck.picture.camera.listener.TypeListener;

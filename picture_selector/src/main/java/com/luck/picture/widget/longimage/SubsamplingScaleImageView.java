@@ -49,7 +49,7 @@ import android.view.ViewParent;
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;

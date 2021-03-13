@@ -485,7 +485,7 @@ public final class PictureThreadUtils {
             this.isSchedule = isSchedule;
         }
 
-        private Executor getDeliver() {
+        public Executor getDeliver() {
             if (deliver == null) {
                 return getGlobalDeliver();
             }

@@ -38,7 +38,7 @@ import com.luck.picture.animators.SlideInBottomAnimationAdapter;
 import com.luck.picture.config.PictureConfig;
 import com.luck.picture.config.PictureMimeType;
 import com.luck.picture.config.PictureSelectionConfig;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.manager.UCropManager;
 import com.luck.picture.decoration.GridSpacingItemDecoration;
 import com.luck.picture.dialog.PhotoItemSelectedDialog;

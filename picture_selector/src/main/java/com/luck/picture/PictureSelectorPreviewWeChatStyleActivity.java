@@ -17,7 +17,7 @@ import com.luck.picture.config.PictureSelectionConfig;
 import com.luck.picture.decoration.GridSpacingItemDecoration;
 import com.luck.picture.decoration.WrapContentLinearLayoutManager;
 import com.luck.picture.entity.LocalMedia;
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 import com.luck.picture.tools.ScreenUtils;
 
 

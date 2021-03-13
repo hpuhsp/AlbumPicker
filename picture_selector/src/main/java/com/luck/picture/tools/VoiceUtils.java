@@ -4,7 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
 
 /**
  * @author：luck

@@ -5,7 +5,8 @@ import android.graphics.Color;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 
-import com.luck.picture.lib.R;
+import com.luck.picture.R;
+
 
 /**
  * @author：luck
