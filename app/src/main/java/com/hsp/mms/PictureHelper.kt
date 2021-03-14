@@ -26,6 +26,8 @@ class PictureHelper {
     fun openAlbum(activity: FragmentActivity, list: List<LocalMedia>?) {
         PictureSelector.create(activity)
             .openGallery(PictureMimeType.ofAll())
+//            .selectionMode(PictureConfig.SINGLE) // 单选模式
+//            .isSingleDirectReturn(true)
             .isWithVideoImage(true)
             .isAndroidQTransform(true) // 必须添加，适配Android Q版本
             .theme(R.style.picture_default_style)
@@ -60,7 +62,7 @@ class PictureHelper {
             .maxSelectNum(9)
             .maxVideoSelectNum(2)
             .isCompress(true)
-            .compressSavePath(fragment.context?.let { FileUtils.getCompressFilePath(it) }) // 图片压缩路径，不包括视频
+            .compressSavePath(fragment.context?.let { FileUtils.getCompressFilePath(it) }) // 图片压缩路径
             .imageSpanCount(4)
             .selectionData(list ?: ArrayList()) // 是否传入已选图片
             .videoMaxSecond(16) // 限定选择16s的视频

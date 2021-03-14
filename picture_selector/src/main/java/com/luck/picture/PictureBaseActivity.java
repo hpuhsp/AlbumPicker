@@ -380,6 +380,9 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         List<LocalMedia> imageList = new ArrayList<>();
         List<LocalMedia> videoList = new ArrayList<>();
         for (LocalMedia media : result) {
+            if (!TextUtils.isEmpty(media.getCompressPath())) {
+                continue;
+            }
             if (PictureMimeType.isHasImage(media.getMimeType())) {
                 imageList.add(media);
             } else if (PictureMimeType.isHasVideo(media.getMimeType())) {
@@ -393,7 +396,11 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         if (config.isVideoCompress) {
             size += videoList.size();
         }
-        int compressSize = size;
+        final int compressSize = size;
+        if (compressSize == 0) {
+            onResult(result);
+            return;
+        }
         final int[] taskSize = {0};
         try {
             if (config.synOrAsy) {
@@ -500,7 +507,6 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
         }
         mWorkLoadingProgress.setProgress(0);
         mWorkLoadingProgress.show(getSupportFragmentManager(), "progress_dialog");
-
     }
 
     /**
@@ -526,6 +532,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
             PictureThreadUtils.executeByIo(new VideoCompressTask(processor, videoList.get(i), retriever, new OnCompressVideoCallBack() {
                 @Override
                 public void onCompressSuccess(LocalMedia localMedia) {
+                    checkVideoCompressResult(localMedia);
                     taskSize[0]++;
                     if (taskSize[0] == compressSize) {
                         backForResult(result);
@@ -547,6 +554,18 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
                     calculateTaskProgress(concurrentHashMap, size);
                 }
             }));
+        }
+    }
+
+    /**
+     * 处理视频文件压缩返回结果
+     *
+     * @param localMedia
+     */
+    private void checkVideoCompressResult(LocalMedia localMedia) {
+        localMedia.setCompressed(true);
+        if (SdkVersionUtils.checkedAndroid_Q()) {
+            localMedia.setAndroidQToPath(localMedia.getCompressPath());
         }
     }
 
@@ -626,7 +645,7 @@ public abstract class PictureBaseActivity extends AppCompatActivity {
             if (PictureMimeType.isContent(filePath)) {
                 filePath = PictureFileUtils.getPath(PictureBaseActivity.this, Uri.parse(localMedia.getPath()));
             }
-
+            // 备注：压缩策略可以根据VideoProcessor库文档说明进行自定义实现
             processor
                     .input(filePath)
                     .output(localMedia.getCompressPath())

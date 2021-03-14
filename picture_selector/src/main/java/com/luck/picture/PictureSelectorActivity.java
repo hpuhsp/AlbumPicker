@@ -1757,12 +1757,12 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                     int imageSize = 0;
                     for (int i = 0; i < size; i++) {
                         LocalMedia media = list.get(i);
-                        if (PictureMimeType.isHasImage(media.getMimeType())) {
+                        if (PictureMimeType.isHasImage(media.getMimeType()) || PictureMimeType.isHasVideo(media.getMimeType())) {
                             imageSize++;
                             break;
                         }
                     }
-                    if (imageSize <= 0 || !config.isCompress || config.isCheckOriginalImage) {
+                    if (imageSize <= 0 || (!config.isCompress && !config.isVideoCompress) || config.isCheckOriginalImage) {
                         onResult(list);
                     } else {
                         compressImage(list);
@@ -1772,6 +1772,8 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                     String mimeType = list.size() > 0 ? list.get(0).getMimeType() : "";
                     if (config.isCompress && PictureMimeType.isHasImage(mimeType)
                             && !config.isCheckOriginalImage) {
+                        compressImage(list);
+                    } else if (config.isVideoCompress && PictureMimeType.isHasVideo(mimeType)) {
                         compressImage(list);
                     } else {
                         onResult(list);
@@ -1802,10 +1804,11 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
      */
     private void singleDirectReturnCameraHandleResult(String mimeType) {
         boolean isHasImage = PictureMimeType.isHasImage(mimeType);
+        boolean isHasVideo = PictureMimeType.isHasVideo(mimeType);
         if (config.enableCrop && isHasImage) {
             config.originalPath = config.cameraPath;
             UCropManager.ofCrop(this, config.originalPath, mimeType);
-        } else if (config.isCompress && isHasImage) {
+        } else if ((config.isCompress && isHasImage) || (isHasVideo && config.isVideoCompress)) {
             List<LocalMedia> selectedImages = mAdapter.getSelectedData();
             compressImage(selectedImages);
         } else {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
+import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.luck.picture.config.PictureMimeType
@@ -214,7 +215,7 @@ class NinePhotoView @JvmOverloads constructor(
                                 0
                             )
                     }
-//                    tvDuration.text = duration.toString()
+                    tvDuration.text = TimeUtils.millis2String(duration, "mm:ss")
                 }
 
                 if (chooseModel == PictureMimeType.ofAudio()) {
