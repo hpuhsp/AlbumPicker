@@ -23,9 +23,9 @@ bintray {
 //如果local.properties文件存在则读取文件中bintray.apikey数据,不存在则读取java环境变量中自定义的bintray_user
 
     pkg {
-        userOrg = 'leo'
-        repo = 'maven'
-        name = POM_NAME
+        userOrg = '517091' // 组织id
+        repo = 'maven' // 仓库名称
+        name = POM_NAME  // 包名称
         licenses = ["Apache-2.0"]
         websiteUrl = siteUrl
         vcsUrl = gitUrl
