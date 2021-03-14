@@ -13,6 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-bintray_upload.gradle
 gradle.properties
 upload_nexus.gradle
