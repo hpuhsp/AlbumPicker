@@ -37,4 +37,4 @@ dependencies {
     api project(':ucrop')
     api project(':video_compress')
 }
-//apply from: '../bintray_upload.gradle'
+apply from: '../bintray_upload.gradle'
