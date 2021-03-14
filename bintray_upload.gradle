@@ -19,9 +19,11 @@ bintray {
     println("-------isHasFile-------------------->" + isHasFile)
     println("-------POM_NAME-------------------->" + POM_NAME)
     // 如果local.properties文件存在则读取文件中bintray.user数据,不存在则读取java环境变量中自定义的bintray_user
-    user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray_user")
-    // 如果local.properties文件存在则读取文件中bintray.apikey数据,不存在则读取java环境变量中自定义的bintray_user
-    key = isHasFile ? properties.getProperty("bintray.apikey") : System.getenv("bintray_apikey")
+//    user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray_user")
+//    // 如果local.properties文件存在则读取文件中bintray.apikey数据,不存在则读取java环境变量中自定义的bintray_user
+//    key = isHasFile ? properties.getProperty("bintray.apikey") : System.getenv("bintray_apikey")
+    user = 'beijingwahaha'
+    key = '1ed0492e9cb2fa6bd6ceb616b0e755a973df104d'
     println("-------user-------------------->" + user)
     println("-------key-------------------->" + key)
     pkg {
