@@ -1,9 +1,8 @@
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
-
+//读取local.properties文件
 Properties properties = new Properties()
 boolean isHasFile = false
-//读取local.properties文件
 if (project.rootProject.findProject('local.properties') != null) {
     isHasFile = true
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -17,6 +16,8 @@ version = rootProject.ext.cfgs.versionName
 group = "com.walle.planet"
 
 bintray {
+    println("-------isHasFile-------------------->" + isHasFile)
+    println("-------POM_NAME-------------------->" + POM_NAME)
     // 如果local.properties文件存在则读取文件中bintray.user数据,不存在则读取java环境变量中自定义的bintray_user
     user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray_user")
     // 如果local.properties文件存在则读取文件中bintray.apikey数据,不存在则读取java环境变量中自定义的bintray_user
