@@ -5,6 +5,7 @@
 
 [ ![Download](https://travis-ci.com/hpuhsp/AlbumPicker.svg?branch=master)](https://github.com/hpuhsp/AlbumPicker)
 [ ![Download](https://api.bintray.com/packages/517091/maven/album-picker/images/download.svg) ](https://bintray.com/517091/maven/album-picker/_latestVersion)
+[ ![Download](https://camo.githubusercontent.com/71ba8afee7eaab51eb1b50c980166470803ec90fd2a7ceb37457902d2c598fca/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f506c6174666f726d2d416e64726f69642d677265656e2e737667) ](https://developer.android.google.cn/?hl=zh_cn)
 ##### 使用
 * 添加依赖
 ```
