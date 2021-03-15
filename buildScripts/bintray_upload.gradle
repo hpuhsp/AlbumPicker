@@ -1,0 +1,37 @@
+apply plugin: 'com.github.panpf.bintray-publish'
+publish {
+    userOrg = '517091'
+    groupId = 'com.walle.planet'
+    artifactId = 'album-picker'
+    desc = 'A common lib of android picture selector，contains video compression implementation logic,to make your developing quicker and easier.'
+    publishVersion = '1.0.0'
+
+//    artifactId = 'ucrop'
+//    desc = 'A common lib of android picture crop,to make your developing quicker and easier.'
+//    publishVersion = '1.0.0'
+
+//    artifactId = 'video-compress'
+//    desc = 'A common lib contains video compression implementation logic,to make your developing quicker and easier.'
+//    publishVersion = '1.0.0'
+
+    website = 'https://github.com/hpuhsp/AlbumPicker.git'
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+//打包源码doc文档
+task javadoc(type: Javadoc) {
+    failOnError false
+    options.encoding = "UTF-8"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}

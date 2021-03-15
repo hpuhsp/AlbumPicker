@@ -34,7 +34,9 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:${cfgs.camerax_version}"
     implementation "androidx.localbroadcastmanager:localbroadcastmanager:${cfgs.localbroadcastmanager}"
     implementation "androidx.camera:camera-view:${cfgs.camerax_view}"
-    api project(':ucrop')
-    api project(':video_compress')
+//    api project(':ucrop')
+//    api project(':video_compress')
+    api 'com.walle.planet:ucrop:1.0.0'
+    api 'com.walle.planet:video-compress:1.0.0'
 }
-apply from: '../bintray_upload.gradle'
+apply from: '../buildScripts/bintray_upload.gradle'

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
     id 'kotlin-android-extensions'
 }
 
@@ -34,6 +35,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    // 视图绑定,根据具体模块和个人的习惯可以选择使用，目前未启用，采用Kotlin扩展引入布局文件方式
+    buildFeatures {
+        viewBinding = true
+    }
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -45,7 +54,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    api project(':picture_selector')
+//    api project(':picture_selector')
+    implementation 'com.walle.planet:album-picker:1.0.0'
     implementation "com.github.bumptech.glide:glide:${cfgs.glide_version}"
     implementation "pub.devrel:easypermissions:3.0.0"
     implementation 'com.blankj:utilcodex:1.29.0'

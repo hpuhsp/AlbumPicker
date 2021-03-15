@@ -13,7 +13,7 @@ maven{
     url 'https://dl.bintray.com/517091/maven'
 }
 ...
-implementation 'com.walle.planet:picture_selector:1.0.0'
+implementation 'com.walle.planet:album-picker:1.0.0'
 ```
 
 参考项目：

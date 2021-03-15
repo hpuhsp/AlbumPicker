@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-upload_nexus.gradle
+buildScripts/upload_nexus.gradle

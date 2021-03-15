@@ -32,3 +32,4 @@ dependencies {
     implementation "androidx.transition:transition:${cfgs.androidx_transition_version}"
     implementation "androidx.recyclerview:recyclerview:${cfgs.version_recyclerview}"
 }
+//apply from: '../buildScripts/bintray_upload.gradle'
